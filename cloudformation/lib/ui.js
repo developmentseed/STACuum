@@ -17,6 +17,7 @@ export default {
         },
         RestApiDeployment: {
             Type: 'AWS::ApiGateway::Deployment',
+            DependsOn: ['RestApiRootMethod'],
             Properties: {
                 Description: cf.stackName,
                 RestApiId: cf.ref('RestApi'),
