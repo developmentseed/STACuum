@@ -1,0 +1,15 @@
+{
+    "profile": "devseedsam",
+    "artifacts": {
+        "docker": [
+            "stacuum:api-{{gitsha}}",
+        ]
+    },
+    "tags": [{
+        "Key": "Project",
+        "Value": "STACuum"
+    },{
+        "Key": "Client",
+        "Value": "labs"
+    }]
+}

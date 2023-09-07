@@ -1,0 +1,29 @@
+{
+    "name": "@developmentseed/stacuum",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Suck up ESRI Server Metadata and host it as STAC",
+    "main": " ",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "lint": "eslint cloudformation/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/developmentseed/STACuum.git"
+    },
+    "author": "Nick Ingalls <nick@ingalls.ca>",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/developmentseed/STACuum/issues"
+    },
+    "homepage": "https://github.com/developmentseed/STACuum#readme",
+    "devDependencies": {
+        "@openaddresses/batch-alarms": "^4.0.0",
+        "eslint": "^8.38.0",
+        "eslint-plugin-node": "^11.1.0"
+    },
+    "dependencies": {
+        "@openaddresses/cloudfriend": "^7.0.0"
+    }
+}
