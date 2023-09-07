@@ -7,7 +7,7 @@
             </div>
             <div class="col mx-2">
                 <div class="page-pretitle">Development Seed</div>
-                <h2 class="page-title">Segment Anything Service</h2>
+                <h2 class="page-title">STACuum</h2>
             </div>
 
             <div v-if='user' class='ms-auto'>
@@ -52,7 +52,7 @@ import {
 } from '@tak-ps/vue-tabler';
 
 export default {
-    name: 'SegmentAnything',
+    name: 'STACuum',
     data: function() {
         return {
             mounted: false,

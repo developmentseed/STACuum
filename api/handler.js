@@ -3,7 +3,7 @@ import ECS from '@aws-sdk/client-ecs';
 import S3 from '@aws-sdk/client-s3';
 import CognitoProvider from '@aws-sdk/client-cognito-identity-provider';
 
-for (const env of ['UserPoolId', 'ClientId', 'StackName', 'AssetBucket', 'GitSha']) {
+for (const env of ['UserPoolId', 'ClientId', 'StackName', 'GitSha']) {
     if (!process.env[env]) throw new Error(`${env} Env Var Required`);
 }
 
@@ -130,38 +130,6 @@ export async function handler(event) {
                 gpu: {},
                 cpu: {}
             };
-
-            await Promise.all([
-                (async () => {
-                    const services = await ecs.send(new ECS.DescribeServicesCommand({
-                        cluster: `${process.env.StackName}-cluster`,
-                        services: [
-                            `${process.env.StackName}-Service`,
-                            `${process.env.StackName}-GPUService`,
-                        ]
-                    }));
-
-                    for (const service of services.services) {
-                        const type = service.serviceName.endsWith('GPUService') ? 'gpu' : 'cpu';
-
-                        res[type].pending = service.pendingCount;
-                        res[type].running = service.runningCount;
-                        res[type].desired = service.desiredCount;
-                    }
-                })(),
-                (async () => {
-                    const list = await s3.send(new S3.ListObjectsCommand({
-                        Bucket: process.env.AssetBucket,
-                        Prefix: process.env.GitSha
-                    }));
-
-                    res.models = (list.Contents || []).map((key) => {
-                        return key.Key.replace(process.env.GitSha + '/', '')
-                    });
-                })()
-            ]);
-
-            console.error(res);
 
             return response(res);
         } else {
