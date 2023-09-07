@@ -19,6 +19,8 @@ export async function handler(event) {
         } catch (err) {
             return response({ message: 'Failed to parse request body' }, 400);
         }
+    } else {
+        event.body = JSON.parse(event.body);
     }
 
     try {
