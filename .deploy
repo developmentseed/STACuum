@@ -1,8 +1,8 @@
 {
-    "profile": "devseedsam",
+    "profile": "devseed",
     "artifacts": {
         "docker": [
-            "stacuum:api-{{gitsha}}",
+            "stacuum:api-{{gitsha}}"
         ]
     },
     "tags": [{
