@@ -10,7 +10,7 @@
                     <TablerLoading v-if='loading' desc='Loading Ingest'/>
                     <div v-else class='card-body'>
                         <div class='row'>
-                            <div class='col-12 col-md-6 mb-3'>
+                            <div class='col-12 mb-3'>
                                 <TablerInput label='ESRI Server URL' v-model='server.url'/>
                             </div>
                             <div class='col-12 d-flex'>
