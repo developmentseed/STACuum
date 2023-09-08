@@ -11,16 +11,28 @@
                             <PlusIcon @click='$router.push("/edit")' class='cursor-pointer'/>
                         </div>
                     </div>
-                    <div class='card-body'>
-                        <TablerLoading v-if='loading'/>
-                        <template v-else>
-                            <div class='row'>
-                                <div class='mx-2'>
-                                    <div class='subheader'>Loaded Models</div>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
+                    <template v-if='loading.list'>
+                        <TablerLoading desc='Loading Servers'/>
+                    </template>
+                    <template v-else-if='!list.servers.length'>
+                        <TablerNone label='Servers' :create='false'/>
+                    </template>
+                    <table v-else class="table table-hover card-table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Url</th>
+                                <th>LastCrawled</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                              <tr :key='server.id' v-for='server in list.server'>
+                                  <td v-text='server.name'></td>
+                                  <td v-text='server.url'></td>
+                                  <td v-text='server.last'></td>
+                              </tr>
+                          </tbody>
+                      </table>
                 </div>
             </div>
         </div>
@@ -35,6 +47,7 @@ import PageFooter from './PageFooter.vue';
 import Status from './util/Status.vue';
 import {
     TablerInput,
+    TablerNone,
     TablerLoading
 } from '@tak-ps/vue-tabler'
 
@@ -50,8 +63,13 @@ export default {
     },
     data: function() {
         return {
-            loading: true,
-            status: {}
+            loading: {
+                list: true
+            },
+            list: {
+                total: 0,
+                servers: []
+            }
         }
     },
     mounted: async function() {
@@ -59,9 +77,9 @@ export default {
     },
     methods: {
         async getStatus() {
-            this.loading = true;
-            this.status = await window.std('/ingest');
-            this.loading = false;
+            this.loading.list = true;
+            this.list = await window.std('/ingest');
+            this.loading.list = false;
         }
     },
     components: {
@@ -69,6 +87,7 @@ export default {
         PlusIcon,
         RefreshIcon,
         TablerInput,
+        TablerNone,
         TablerLoading,
         PageFooter
     }

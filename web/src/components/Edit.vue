@@ -7,7 +7,7 @@
                     <div class='card-header d-flex'>
                         <h1 class='card-title'>ESRI Server Ingest</h1>
                     </div>
-                    <TablerLoading v-if='loading' desc='Loading Ingest'/>
+                    <TablerLoading v-if='loading' desc='Submitting Server for Ingest'/>
                     <div v-else class='card-body'>
                         <div class='row'>
                             <div class='col-12 mb-3'>
@@ -43,6 +43,7 @@ export default {
     },
     data: function() {
         return {
+            loading: false,
             server: {
                 url: ''
             }
