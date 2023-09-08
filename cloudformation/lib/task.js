@@ -1,10 +1,21 @@
 import cf from '@openaddresses/cloudfriend';
 
 export default {
-    Resrouces: {
+    Resources: {
+        SQSIngestMapping: {
+            Type: 'AWS::Lambda::EventSourceMapping',
+            Properties: {
+                BatchSize: 1,
+                Enabled: true,
+                EventSourceArn: cf.getAtt('SQSIngest', 'Arn'),
+                FunctionName: cf.join('-', [cf.stackName, 'task']),
+                FunctionResponseTypes: ['ReportBatchItemFailures']
+            }
+        },
         RestFunction: {
             Type: 'AWS::Lambda::Function',
             Properties: {
+                FunctionName: cf.join('-', [cf.stackName, 'task']),
                 Code: {
                     ImageUri: cf.join([cf.accountId, '.dkr.ecr.', cf.region, '.amazonaws.com/stacuum:task-', cf.ref('GitSha')]),
                 },
