@@ -2,7 +2,8 @@
     "profile": "devseed",
     "artifacts": {
         "docker": [
-            "stacuum:api-{{gitsha}}"
+            "stacuum:api-{{gitsha}}",
+            "stacuum:task-{{gitsha}}"
         ]
     },
     "tags": [{
