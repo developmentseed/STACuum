@@ -2,10 +2,12 @@ import cf from '@openaddresses/cloudfriend';
 import S3 from './lib/s3.js';
 import UI from './lib/ui.js';
 import SQS from './lib/sqs.js';
+import Task from './lib/task.js';
 import CloudFront from './lib/cloudfront.js';
 import Cognito from './lib/cognito.js';
 
 export default cf.merge(
+    Task,
     SQS,
     S3,
     UI,
