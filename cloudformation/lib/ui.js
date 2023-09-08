@@ -93,6 +93,7 @@ export default {
                 Timeout: 240,
                 Environment: {
                     Variables: {
+                        IngestQueue:  cf.getAtt('SQSIngest', 'QueueUrl'),
                         StackName: cf.stackName,
                         GitSha: cf.ref('GitSha'),
                         UserPoolId: cf.ref('UserPool'),

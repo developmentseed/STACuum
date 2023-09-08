@@ -1,7 +1,7 @@
 function std() {
     window.stdurl = function(url) {
         if (window.location.hostname === 'localhost') {
-            url = new URL(url, 'https://api.segmentanythingservice.com');
+            url = new URL(url, 'https://api.stacuum.ds.io');
         } else {
             try {
                 url = new URL(url);

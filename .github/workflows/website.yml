@@ -23,6 +23,8 @@ jobs:
               with:
                   node-version: 20
 
+            - run: apt update -y && apt install -y awscli
+
             - name: Configure AWS Credentials
               uses: aws-actions/configure-aws-credentials@v1
               with:

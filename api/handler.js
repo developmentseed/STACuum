@@ -1,9 +1,8 @@
 import Cognito from '@aws-sdk/client-cognito-identity';
-import ECS from '@aws-sdk/client-ecs';
-import S3 from '@aws-sdk/client-s3';
+import SQS from '@aws-sdk/client-sqs';
 import CognitoProvider from '@aws-sdk/client-cognito-identity-provider';
 
-for (const env of ['UserPoolId', 'ClientId', 'StackName', 'GitSha']) {
+for (const env of ['UserPoolId', 'ClientId', 'StackName', 'GitSha', 'IngestQueue']) {
     if (!process.env[env]) throw new Error(`${env} Env Var Required`);
 }
 
@@ -97,40 +96,21 @@ export async function handler(event) {
                 username: user.Username,
                 email: attrs.email
             })
-        } else if (event.httpMethod === 'POST' && event.path === '/status') {
-            const ecs = new ECS.ECSClient({});
+        } else if (event.httpMethod === 'POST' && event.path === '/ingest') {
+            const sqs = new SQS.SQSClient({});
 
-            const cmds = [];
-            if (!isNaN(parseInt(event.body.gpu))) {
-                cmds.push(ecs.send(new ECS.UpdateServiceCommand({
-                    service: process.env.StackName + '-GPUService',
-                    cluster: `${process.env.StackName}-cluster`,
-                    desiredCount: parseInt(event.body.gpu)
-                })));
-            }
-
-            if (!isNaN(parseInt(event.body.cpu))) {
-                cmds.push(ecs.send(new ECS.UpdateServiceCommand({
-                    service: process.env.StackName + '-Service',
-                    cluster: `${process.env.StackName}-cluster`,
-                    desiredCount: parseInt(event.body.cpu)
-                })));
-            }
-
-            await Promise.all(cmds);
+            await sqs.send(new SQS.SendMessageCommand({
+                QueueUrl: process.env.IngestQueue,
+                MessageBody: JSON.stringify(event.body)
+            }));
 
             return response({
-                message: 'Updated Services'
+                message: 'Ingesting'
             })
 
-        } else if (event.httpMethod === 'GET' && event.path === '/status') {
-            const ecs = new ECS.ECSClient({});
-            const s3 = new S3.S3Client({});
-
+        } else if (event.httpMethod === 'GET' && event.path === '/ingest') {
             const res = {
-                models: [],
-                gpu: {},
-                cpu: {}
+                servers: [],
             };
 
             return response(res);
