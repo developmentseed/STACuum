@@ -135,6 +135,14 @@ export default {
                         },{
                             Effect: 'Allow',
                             Action: [
+                                'sqs:SendMessage',
+                            ],
+                            Resource: [
+                                cf.getAtt('SQSIngest', 'Arn')
+                            ]
+                        },{
+                            Effect: 'Allow',
+                            Action: [
                                 'ecs:DescribeServices',
                                 'ecs:UpdateService'
                             ],
