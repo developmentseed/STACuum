@@ -116,7 +116,7 @@ export async function handler(event) {
             }));
 
             const list = await dynamo.send(new DynamoDBDoc.QueryCommand({
-                TableName: this.table,
+                TableName: process.env.StackName,
             }));
 
 
