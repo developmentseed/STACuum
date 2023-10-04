@@ -13,6 +13,8 @@ export async function handler(event) {
                 region: process.env.AWS_REGION || 'us-east-1'
             }));
 
+            event.url = event.url.replace(/arcgis\/rest\/services.*/, '/arcgis/rest/services/');
+
             const row = await dynamo.send(new DynamoDBDoc.GetCommand({
                 TableName: process.env.StackName,
                 Key: {

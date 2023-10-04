@@ -6,6 +6,7 @@ export default {
             Type: 'AWS::DynamoDB::Table',
             Properties: {
                 TableName: cf.stackName,
+                BillingMode: 'PAY_PER_REQUEST',
                 AttributeDefinitions: [{
                     AttributeName: 'ServerUrl',
                     AttributeType: 'S'
@@ -20,6 +21,7 @@ export default {
             Type: 'AWS::DynamoDB::Table',
             Properties: {
                 TableName: cf.join([cf.stackName, '-services']),
+                BillingMode: 'PAY_PER_REQUEST',
                 AttributeDefinitions: [{
                     AttributeName: 'ServiceName',
                     AttributeType: 'S'
