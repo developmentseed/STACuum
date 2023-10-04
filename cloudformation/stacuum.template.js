@@ -5,6 +5,7 @@ import SQS from './lib/sqs.js';
 import Task from './lib/task.js';
 import CloudFront from './lib/cloudfront.js';
 import Cognito from './lib/cognito.js';
+import Dynamo from './lib/dynamo.js';
 
 export default cf.merge(
     Task,
