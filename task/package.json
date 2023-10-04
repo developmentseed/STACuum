@@ -11,6 +11,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "esri-dump": "^4.3.1"
+        "@aws-sdk/client-dynamodb": "^3.423.0",
+        "@aws-sdk/lib-dynamodb": "^3.423.0",
+        "esri-dump": "^4.3.2"
     }
 }

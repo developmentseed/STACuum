@@ -1,30 +1,65 @@
-import EsriDump from '@openaddresses/esri-dump';
+import EsriDump from 'esri-dump';
+import Dynamo from '@aws-sdk/client-dynamodb';
+import DynamoDBDoc from "@aws-sdk/lib-dynamodb";
 
-for (const env of []) {
-    if (!process.env[env]) throw new Error(`${env} Env Var Required`);
-}
+if (!process.env.StackName) process.env.StackName = 'stacuum-prod';
 
 export async function handler(event) {
     for (const record of event.Records) {
         try {
             const event = JSON.parse(record.body);
 
-            console.log(event);
+            const dynamo = DynamoDBDoc.DynamoDBDocumentClient.from(new Dynamo.DynamoDBClient({
+                region: process.env.AWS_REGION || 'us-east-1'
+            }));
 
-            const esri = new EsriDump(event.url, {
+            const row = await dynamo.send(new DynamoDBDoc.GetCommand({
+                TableName: process.env.StackName,
+                Key: {
+                    ServerUrl: event.url
+                }
+            }));
+
+            let Item = row.Item;
+
+            if (!row.Item) {
+                Item = {
+                    ServerUrl: event.url,
+                    LastUpated: String(new Date())
+                }
+
+                await dynamo.send(new DynamoDBDoc.PutCommand({
+                    TableName: process.env.StackName,
+                    Item
+                }));
+            }
+
+            const esri = new EsriDump(Item.ServerUrl, {
                 approach: 'iter',
-                headers
+                headers: event.headers || {}
             });
+
+            const queue = [];
 
             esri.on('error', (err) => {
                 throw err;
-            }).on('service', (service) => {
-                console.log(JSON.stringify(service));
             }).on('layer', (layer) => {
-                console.log(JSON.stringify(layer));
+                queue.push(layer);
             });
 
             await esri.discover();
+
+            for (const q of queue) {
+                console.error(q)
+                /*
+                await dynamo.send(new DynamoDBDoc.PutCommand({
+                    TableName: process.env.StackName,
+                    Item: {
+                        Servi
+                    }
+                }));
+                */
+            }
         } catch (err) {
             throw err;
         }
@@ -32,6 +67,16 @@ export async function handler(event) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+    if (!process.argv[2]) {
+        console.error('./handler.js <URL>');
+        process.exit()
+    }
+
     const res = await handler({
+        Records: [{
+            body: JSON.stringify({
+                url: process.argv[2]
+            })
+        }]
     });
 }

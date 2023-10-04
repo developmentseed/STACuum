@@ -13,6 +13,7 @@ export default cf.merge(
     S3,
     UI,
     Cognito,
+    Dynamo,
     CloudFront,
     {
         Description: 'Template for @developmentseed/segment-anything-geo',

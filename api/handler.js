@@ -1,6 +1,8 @@
 import Cognito from '@aws-sdk/client-cognito-identity';
 import SQS from '@aws-sdk/client-sqs';
 import CognitoProvider from '@aws-sdk/client-cognito-identity-provider';
+import Dynamo from '@aws-sdk/client-dynamodb';
+import DynamoDBDoc from "@aws-sdk/lib-dynamodb";
 
 for (const env of ['UserPoolId', 'ClientId', 'StackName', 'GitSha', 'IngestQueue']) {
     if (!process.env[env]) throw new Error(`${env} Env Var Required`);
@@ -109,8 +111,17 @@ export async function handler(event) {
             })
 
         } else if (event.httpMethod === 'GET' && event.path === '/ingest') {
+            const dynamo = DynamoDBDoc.DynamoDBDocumentClient.from(new Dynamo.DynamoDBClient({
+                region: process.env.AWS_REGION || 'us-east-1'
+            }));
+
+            const list = await ddbdoc.send(new DynamoDBDoc.QueryCommand({
+                TableName: this.table,
+            }));
+
+
             const res = {
-                servers: [],
+                servers: list.Items,
             };
 
             return response(res);

@@ -7,24 +7,30 @@ export default {
             Properties: {
                 TableName: cf.stackName,
                 AttributeDefinitions: [{
-                    AttributeName: 'ServerName',
-                    AttributeType: 'N'
-                },{
                     AttributeName: 'ServerUrl',
-                    AttributeType: 'N'
-                },{
-                    AttributeName: 'LastUpdated',
-                    AttributeType: 'N'
-                },{
-                    AttributeName: 'Id',
                     AttributeType: 'S'
                 }],
                 KeySchema: [{
-                    AttributeName: 'ServerName',
+                    AttributeName: 'ServerUrl',
                     KeyType: 'HASH'
-                },{
-                    AttributeName: 'Id',
-                    KeyType: 'RANGE'
+                }],
+                ProvisionedThroughput: {
+                    ReadCapacityUnits: 5,
+                    WriteCapacityUnits: 5
+                }
+            }
+        },
+        DDBServicesTable: {
+            Type: 'AWS::DynamoDB::Table',
+            Properties: {
+                TableName: cf.join([cf.stackName, '-services']),
+                AttributeDefinitions: [{
+                    AttributeName: 'ServiceName',
+                    AttributeType: 'S'
+                }],
+                KeySchema: [{
+                    AttributeName: 'ServiceName',
+                    KeyType: 'HASH'
                 }],
                 ProvisionedThroughput: {
                     ReadCapacityUnits: 5,
