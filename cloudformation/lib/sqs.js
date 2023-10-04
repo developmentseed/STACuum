@@ -6,6 +6,7 @@ export default {
             Type: 'AWS::SQS::Queue',
             Properties: {
                 QueueName: cf.join('-', [cf.stackName, cf.accountId, cf.region]),
+                VisibilityTimeout: 240,
             }
         }
     }

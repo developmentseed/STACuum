@@ -4,6 +4,7 @@ export default {
     Resources: {
         SQSIngestMapping: {
             Type: 'AWS::Lambda::EventSourceMapping',
+            DependsOn: ['TaskFunction'],
             Properties: {
                 BatchSize: 1,
                 Enabled: true,
@@ -12,7 +13,7 @@ export default {
                 FunctionResponseTypes: ['ReportBatchItemFailures']
             }
         },
-        RestFunction: {
+        TaskFunction: {
             Type: 'AWS::Lambda::Function',
             Properties: {
                 FunctionName: cf.join('-', [cf.stackName, 'task']),
