@@ -47,21 +47,24 @@ export async function handler(event) {
                 throw err;
             }).on('layer', (layer) => {
                 queue.push(layer);
+            }).on('done', async () => {
+                for (const q of queue) {
+                    await dynamo.send(new DynamoDBDoc.PutCommand({
+                        TableName: process.env.StackName + '-services',
+                        Item: {
+                            Type: q.type,
+                            ServiceName: q.name,
+                            Description: q.description,
+                            GeometryType: q.geometryType,
+                            Extent: q.extent,
+                            Schema: q.schema,
+                            Original: q
+                        }
+                    }));
+                }
             });
 
             await esri.discover();
-
-            for (const q of queue) {
-                console.error(q)
-                /*
-                await dynamo.send(new DynamoDBDoc.PutCommand({
-                    TableName: process.env.StackName,
-                    Item: {
-                        Servi
-                    }
-                }));
-                */
-            }
         } catch (err) {
             throw err;
         }
