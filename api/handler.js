@@ -115,7 +115,7 @@ export async function handler(event) {
                 region: process.env.AWS_REGION || 'us-east-1'
             }));
 
-            const list = await dynamo.send(new DynamoDBDoc.QueryCommand({
+            const list = await dynamo.send(new DynamoDBDoc.ScanCommand({
                 TableName: process.env.StackName,
             }));
 
