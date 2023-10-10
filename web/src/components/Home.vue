@@ -20,16 +20,14 @@
                     <table v-else class="table table-hover card-table table-vcenter">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Url</th>
+                                <th>Server Url</th>
                                 <th>LastCrawled</th>
                             </tr>
                         </thead>
                         <tbody>
-                              <tr :key='server.id' v-for='server in list.server'>
-                                  <td v-text='server.name'></td>
-                                  <td v-text='server.url'></td>
-                                  <td v-text='server.last'></td>
+                              <tr :key='server.ServerUrl' v-for='server in list.servers'>
+                                  <td v-text='server.ServerUrl'></td>
+                                  <td v-text='server.LastUpdated'></td>
                               </tr>
                           </tbody>
                       </table>

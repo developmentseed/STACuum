@@ -126,6 +126,16 @@ export default {
                         Statement: [{
                             Effect: 'Allow',
                             Action: [
+                                'dynamodb:Scan',
+                                'dynamodb:Query',
+                            ],
+                            Resource: [
+                                cf.getAtt('DDBTable', 'Arn'),
+                                cf.getAtt('DDBServicesTable', 'Arn')
+                            ]
+                        },{
+                            Effect: 'Allow',
+                            Action: [
                                 'cognito-idp:AdminInitiateAuth',
                                 'cognito-idp:AdminRespondToAuthChallenge'
                             ],
