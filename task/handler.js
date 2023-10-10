@@ -26,8 +26,9 @@ export async function handler(event) {
 
             if (!row.Item) {
                 Item = {
+                    ServerName: event.name,
                     ServerUrl: event.url,
-                    LastUpated: String(new Date())
+                    LastUpdated: String(new Date())
                 }
 
                 await dynamo.send(new DynamoDBDoc.PutCommand({

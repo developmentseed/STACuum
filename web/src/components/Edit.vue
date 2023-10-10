@@ -9,7 +9,10 @@
                     </div>
                     <TablerLoading v-if='loading' desc='Submitting Server for Ingest'/>
                     <div v-else class='card-body'>
-                        <div class='row'>
+                        <div class='row g-2'>
+                            <div class='col-12'>
+                                <TablerInput label='Server Name' v-model='server.name'/>
+                            </div>
                             <div class='col-12 mb-3'>
                                 <TablerInput label='ESRI Server URL' v-model='server.url'/>
                             </div>
@@ -45,6 +48,7 @@ export default {
         return {
             loading: false,
             server: {
+                name: '',
                 url: ''
             }
         }

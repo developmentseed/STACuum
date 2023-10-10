@@ -17,20 +17,24 @@
                     <template v-else-if='!list.servers.length'>
                         <TablerNone label='Servers' :create='false'/>
                     </template>
-                    <table v-else class="table table-hover card-table table-vcenter">
-                        <thead>
-                            <tr>
-                                <th>Server Url</th>
-                                <th>LastCrawled</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                              <tr :key='server.ServerUrl' v-for='server in list.servers'>
-                                  <td v-text='server.ServerUrl'></td>
-                                  <td v-text='server.LastUpdated'></td>
-                              </tr>
-                          </tbody>
-                      </table>
+                    <div v-else class='table-responsive'>
+                        <table class="table table-hover card-table table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Server Url</th>
+                                    <th>LastCrawled</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                  <tr :key='server.ServerUrl' v-for='server in list.servers'>
+                                      <td v-text='server.ServerName'></td>
+                                      <td v-text='server.ServerUrl'></td>
+                                      <td v-text='server.LastUpdated'></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                    </div>
                 </div>
             </div>
         </div>
