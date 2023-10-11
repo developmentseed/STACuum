@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import EsriDump from 'esri-dump';
 import Dynamo from '@aws-sdk/client-dynamodb';
 import DynamoDBDoc from "@aws-sdk/lib-dynamodb";
@@ -26,6 +27,7 @@ export async function handler(event) {
 
             if (!row.Item) {
                 Item = {
+                    UUID: crypto.randomUUID(),
                     ServerName: event.name,
                     ServerUrl: event.url,
                     LastUpdated: String(new Date())

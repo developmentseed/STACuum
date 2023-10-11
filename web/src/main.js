@@ -13,6 +13,7 @@ const router = new VueRouter.createRouter({
     history: VueRouter.createWebHistory(),
     routes: [
         { path: '/', name: 'home', component: () => import('./components/Home.vue') },
+        { path: '/server/:server', name: 'server', component: () => import('./components/Server.vue') },
         { path: '/login', name: 'login', component: () => import('./components/Login.vue') },
         { path: '/edit', name: 'edit', component: () => import('./components/Edit.vue') },
         { path: '/profile', name: 'profile', component: () => import('./components/Profile.vue') },
