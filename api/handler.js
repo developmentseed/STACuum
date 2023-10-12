@@ -15,7 +15,18 @@ const app = express();
 
 const provider = new CognitoProvider.CognitoIdentityProvider();
 
-app.use('*', cors({ origin: true }));
+app.disable('x-powered-by');
+app.use(cors({
+    origin: '*',
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'Content-Length',
+        'x-requested-with'
+    ],
+    credentials: true
+}));
+
 app.use(bodyParser.json());
 
 app.post('/login', async (req, res) => {
