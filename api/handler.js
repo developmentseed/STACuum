@@ -76,7 +76,7 @@ app.post('/login', async (req, res) => {
         }
 
         return res.json({
-            username: req.auth.Username,
+            username: user.Username,
             email: attrs.email,
             token: auth.AuthenticationResult.AccessToken
         });
