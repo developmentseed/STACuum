@@ -1,8 +1,10 @@
-import Cognito from '@aws-sdk/client-cognito-identity';
+import bodyParser from 'body-parser';
+import express from 'express';
 import SQS from '@aws-sdk/client-sqs';
 import CognitoProvider from '@aws-sdk/client-cognito-identity-provider';
 import Dynamo from '@aws-sdk/client-dynamodb';
-import DynamoDBDoc from "@aws-sdk/lib-dynamodb";
+import DynamoDBDoc from '@aws-sdk/lib-dynamodb';
+import serverless from 'serverless-http';
 import cors from 'cors';
 
 for (const env of ['UserPoolId', 'ClientId', 'StackName', 'GitSha', 'IngestQueue']) {
@@ -11,30 +13,28 @@ for (const env of ['UserPoolId', 'ClientId', 'StackName', 'GitSha', 'IngestQueue
 
 const app = express();
 
-const cognito = new Cognito.CognitoIdentityClient();
 const provider = new CognitoProvider.CognitoIdentityProvider();
 
-app.use('*', cors({
-    origin: true
-}));
+app.use('*', cors({ origin: true }));
+app.use(bodyParser.json());
 
 app.post('/login', async (req, res) => {
-    if (event.body.ChallengeResponse) {
-        if (!event.body.ChallengeName) throw new Error('ChallengeName required');
-        if (!event.body.Session) throw new Error('Session required');
+    if (req.body.ChallengeResponse) {
+        if (!req.body.ChallengeName) throw new Error('ChallengeName required');
+        if (!req.body.Session) throw new Error('Session required');
 
         const res = await provider.adminRespondToAuthChallenge({
             UserPoolId: process.env.UserPoolId,
             ClientId: process.env.ClientId,
-            ChallengeName: event.body.ChallengeName,
+            ChallengeName: req.body.ChallengeName,
             ChallengeResponses: {
-                USERNAME: event.body.ChallengeResponse.USERNAME,
-                NEW_PASSWORD: event.body.ChallengeResponse.NEW_PASSWORD
+                USERNAME: req.body.ChallengeResponse.USERNAME,
+                NEW_PASSWORD: req.body.ChallengeResponse.NEW_PASSWORD
             },
-            Session: event.body.Session
+            Session: req.body.Session
         });
 
-        return response({ message: 'Challenge Accepted' }, 200);
+        return res.json({ message: 'Challenge Accepted' });
     } else {
         console.error(process.env.UserPoolId, process.env.ClientId);
         const auth = await provider.adminInitiateAuth({
@@ -42,17 +42,17 @@ app.post('/login', async (req, res) => {
             ClientId: process.env.ClientId,
             AuthFlow: 'ADMIN_USER_PASSWORD_AUTH',
             AuthParameters: {
-                USERNAME: event.body.Username,
-                PASSWORD: event.body.Password
+                USERNAME: req.body.Username,
+                PASSWORD: req.body.Password
             }
         });
 
         if (auth.ChallengeName) {
-            return response({
+            return res.json({
                 ChallengeName: auth.ChallengeName,
                 ChallengeParameters: auth.ChallengeParameters,
                 Session: auth.Session
-            }, 200);
+            });
         }
 
         const user = await provider.getUser({
@@ -60,15 +60,15 @@ app.post('/login', async (req, res) => {
         });
 
         const attrs = {};
-        for (const attr of req.auth.UserAttributes) {
+        for (const attr of user.UserAttributes) {
             attrs[attr.Name] = attr.Value;
         }
 
-        return response({
+        return res.json({
             username: req.auth.Username,
             email: attrs.email,
             token: auth.AuthenticationResult.AccessToken
-        })
+        });
     }
 });
 
@@ -80,7 +80,7 @@ app.use(async (req, res, next) => {
 
     try {
         req.auth = await provider.getUser({
-            AccessToken: event.headers.Authorization.split(' ')[1]
+            AccessToken: req.headers.Authorization.split(' ')[1]
         });
     } catch (err) {
         return res.status(401).json({ message: err.message });
@@ -98,7 +98,7 @@ app.get('/login', async (req, res) => {
     return res.json({
         username: req.auth.Username,
         email: attrs.email
-    })
+    });
 });
 
 app.post('/ingest', async (req, res) => {
@@ -106,12 +106,12 @@ app.post('/ingest', async (req, res) => {
 
     await sqs.send(new SQS.SendMessageCommand({
         QueueUrl: process.env.IngestQueue,
-        MessageBody: JSON.stringify(event.body)
+        MessageBody: JSON.stringify(req.body)
     }));
 
     return res.json({
         message: 'Ingesting'
-    })
+    });
 });
 
 app.get('/ingest', async (req, res) => {
@@ -120,7 +120,7 @@ app.get('/ingest', async (req, res) => {
     }));
 
     const list = await dynamo.send(new DynamoDBDoc.ScanCommand({
-        TableName: process.env.StackName,
+        TableName: process.env.StackName
     }));
 
 
@@ -133,9 +133,9 @@ const handler = serverless(app);
 
 const startServer = async () => {
     app.listen(3000, () => {
-        console.log("listening on port 3000!");
+        console.log('listening on port 3000!');
     });
-}
+};
 
 startServer();
 
