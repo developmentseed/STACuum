@@ -27,7 +27,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                  <tr @click='$router.push(`/server/${server.UUID}`)' :key='server.UUID' v-for='server in list.servers'>
+                                  <tr @click='$router.push(`/server/${server.UUID}`)' :key='server.UUID' v-for='server in list.servers' class='cursor-pointer'>
                                       <td v-text='server.ServerName'></td>
                                       <td v-text='server.ServerUrl'></td>
                                       <td v-text='server.LastUpdated'></td>
