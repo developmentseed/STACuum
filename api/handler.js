@@ -5,6 +5,7 @@ import CognitoProvider from '@aws-sdk/client-cognito-identity-provider';
 import Dynamo from '@aws-sdk/client-dynamodb';
 import DynamoDBDoc from '@aws-sdk/lib-dynamodb';
 import serverless from 'serverless-http';
+import morgan from 'morgan';
 import cors from 'cors';
 
 for (const env of ['UserPoolId', 'ClientId', 'StackName', 'GitSha', 'IngestQueue']) {
@@ -13,9 +14,10 @@ for (const env of ['UserPoolId', 'ClientId', 'StackName', 'GitSha', 'IngestQueue
 
 const app = express();
 
-const provider = new CognitoProvider.CognitoIdentityProvider();
+const provider = new CognitoProvider.CognitoIdentityProvider({ region: process.env.AWS_REGION || 'us-east-1' });
 
 app.disable('x-powered-by');
+app.use(morgan('combined'));
 app.use(cors({
     origin: '*',
     allowedHeaders: [
@@ -85,13 +87,13 @@ app.post('/login', async (req, res) => {
 
 app.use(async (req, res, next) => {
     // Auth - All Endpoints past this point require Auth
-    if (!req.headers.Authorization) {
+    if (!req.headers.authorization) {
         return res.status(401).json({ message: 'No Authorization Header Provided' });
     }
 
     try {
         req.auth = await provider.getUser({
-            AccessToken: req.headers.Authorization.split(' ')[1]
+            AccessToken: req.headers.authorization.split(' ')[1]
         });
     } catch (err) {
         return res.status(401).json({ message: err.message });
@@ -113,7 +115,7 @@ app.get('/login', async (req, res) => {
 });
 
 app.post('/ingest', async (req, res) => {
-    const sqs = new SQS.SQSClient({});
+    const sqs = new SQS.SQSClient({ region: process.env.AWS_REGION || 'us-east-1' });
 
     await sqs.send(new SQS.SendMessageCommand({
         QueueUrl: process.env.IngestQueue,
@@ -126,9 +128,7 @@ app.post('/ingest', async (req, res) => {
 });
 
 app.get('/ingest', async (req, res) => {
-    const dynamo = DynamoDBDoc.DynamoDBDocumentClient.from(new Dynamo.DynamoDBClient({
-        region: process.env.AWS_REGION || 'us-east-1'
-    }));
+    const dynamo = DynamoDBDoc.DynamoDBDocumentClient.from(new Dynamo.DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' }));
 
     const list = await dynamo.send(new DynamoDBDoc.ScanCommand({
         TableName: process.env.StackName

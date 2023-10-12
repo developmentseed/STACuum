@@ -1,7 +1,7 @@
 function std() {
     window.stdurl = function(url) {
         if (window.location.hostname === 'localhost') {
-            url = new URL(url, 'https://api.stacuum.ds.io');
+            url = new URL(url, 'http://localhost:3000');
         } else {
             try {
                 url = new URL(url);
