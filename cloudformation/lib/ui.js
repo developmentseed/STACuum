@@ -127,7 +127,11 @@ export default {
                             Effect: 'Allow',
                             Action: [
                                 'dynamodb:Scan',
+                                'dynamodb:PutItem',
                                 'dynamodb:Query',
+                                'dynamodb:DeleteItem',
+                                'dynamodb:UpdateItem',
+                                'dynamodb:GetItem',
                             ],
                             Resource: [
                                 cf.getAtt('DDBTable', 'Arn'),
