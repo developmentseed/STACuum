@@ -186,6 +186,15 @@ export default {
             Description: 'API Gateway endpoint URL for manageing CPU & GPU Stack',
             Value: cf.join(['https://', cf.ref('RestApi'), '.execute-api.', cf.region, '.amazonaws.com/', cf.stackName, '/'])
         },
+        IngestQueue:  {
+            Value: cf.getAtt('SQSIngest', 'QueueUrl')
+        },
+        UserPoolId: {
+            Value: cf.ref('UserPool'),
+        },
+        ClientId: {
+            Value: cf.ref('UserPoolClient'),
+        }
     }
 
 }
